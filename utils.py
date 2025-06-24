@@ -52,6 +52,8 @@ def gmail_extract():
 
     imap_server.logout()
 
+    return 'Done'
+
 def excel_load():
     today_date = datetime.today().strftime('%d-%m-%Y')
     cob = datetime.today().strftime('%Y%m%d')
@@ -71,3 +73,5 @@ def excel_load():
     # Append without setting book/sheets manually
     with pd.ExcelWriter(file_path, engine='openpyxl', mode='a', if_sheet_exists='overlay') as writer:
         df.to_excel(writer, sheet_name=sheet_name, index=False, header=False, startrow=startrow)
+
+    return 'Done'
