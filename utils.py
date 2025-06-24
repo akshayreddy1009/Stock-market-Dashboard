@@ -8,7 +8,7 @@ from openpyxl import load_workbook
 def gmail_extract():
     # === Email credentials ===
     EMAIL = 'akki.reddy1009@gmail.com'
-    APP_PASSWORD = 'pidq cnig nqjx jlqd'
+    APP_PASSWORD = 
     DOWNLOAD_FOLDER = 'excel_attachments'
 
     os.makedirs(DOWNLOAD_FOLDER, exist_ok=True)
