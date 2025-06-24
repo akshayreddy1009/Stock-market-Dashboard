@@ -1,4 +1,5 @@
 import imaplib
+import email
 import pyzmail
 import pandas as pd
 import os
@@ -7,8 +8,8 @@ from openpyxl import load_workbook
 
 def gmail_extract():
     # === Email credentials ===
-    EMAIL = '@gmail.com'
-    APP_PASSWORD = 
+    EMAIL = st.secrets["EMAIL"]
+    APP_PASSWORD = st.secrets["APP_PASSWORD"]
     DOWNLOAD_FOLDER = 'excel_attachments'
 
     os.makedirs(DOWNLOAD_FOLDER, exist_ok=True)
@@ -59,12 +60,12 @@ def excel_load():
     cob = datetime.today().strftime('%Y%m%d')
     #today_dt = datetime.today().strftime('%d-%m-%Y')
 
-    df = pd.read_excel(f'excel_attachments\Portfolio_Holdings_UB5C0_{cob}.xlsx', header=5)
+    df = pd.read_excel(f'excel_attachments/Portfolio_Holdings_UB5C0_{cob}.xlsx', header=5)
     df= df[(df["Script Name"] != 'Equity') & (df["Script Name"] != 'Mutual Funds') &(df["Security Type"] == 'EQUITY STOCK')]
     df["Date"]=today_date
     print(df)
 
-    file_path = 'excel_attachments\Master_Portfolio_Tracker.xlsx'
+    file_path = 'excel_attachments/Master_Portfolio_Tracker.xlsx'
     sheet_name = 'Sheet1'
 
     existing_df = pd.read_excel(file_path, sheet_name=sheet_name)
