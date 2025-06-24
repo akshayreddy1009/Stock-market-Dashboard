@@ -10,6 +10,8 @@ st.title("📈 Stock Portfolio Dashboard")
 
 my_password = st.text_input("Enter your Password", value='Password', type= 'password')
 
+secret_pass = st.secrets["sec_pass"]
+
 if st.button('Refresh Gmail'):
 
     msg_mail = gmail_extract()
@@ -17,8 +19,9 @@ if st.button('Refresh Gmail'):
 
     if msg_mail =='Done' and msg_excel == 'Done':
         st.write('Excel created')
+    
 
-if st.button("Submit") and my_password == 'Ipl20sunrh!':
+if st.button("Submit") and my_password == secret_pass:
 
     df = pd.read_excel("excel_attachments/Master_Portfolio_Tracker.xlsx")
     main_df = df
