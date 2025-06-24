@@ -20,7 +20,7 @@ if st.button('Refresh Gmail'):
 
 if st.button("Submit") and my_password == 'Ipl20sunrh!':
 
-    df = pd.read_excel("excel_attachments\Master_Portfolio_Tracker.xlsx")
+    df = pd.read_excel("excel_attachments/Master_Portfolio_Tracker.xlsx")
     main_df = df
     st.subheader("📊 Portfolio Summary")
     df['Date'] = pd.to_datetime(df['Date'])
