@@ -5,3 +5,4 @@ matplotlib
 numpy
 plotly
 pyzmail36
+openpyxl
