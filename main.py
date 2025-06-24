@@ -8,11 +8,11 @@ st.set_page_config(layout="wide", page_title="Akshay's Stock Portfolio Dashboard
 
 st.title("📈 Stock Portfolio Dashboard")
 
-my_password = st.text_input("Enter your Password", value='Password', type= 'password')
+my_password = st.text_input("Enter your Password", type= 'password')
 
 secret_pass = st.secrets["sec_pass"]
 
-if st.button('Refresh Gmail'):
+if st.button('Refresh Gmail') and my_password == secret_pass:
 
     msg_mail = gmail_extract()
     msg_excel = excel_load()
