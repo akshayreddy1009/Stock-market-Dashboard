@@ -70,6 +70,7 @@ def excel_load():
 
     existing_df = pd.read_excel(file_path, sheet_name=sheet_name)
     startrow = len(existing_df) + 1
+    os.remove(f'excel_attachments/Portfolio_Holdings_UB5C0_{cob}.xlsx')
 
     # Append without setting book/sheets manually
     with pd.ExcelWriter(file_path, engine='openpyxl', mode='a', if_sheet_exists='overlay') as writer:
