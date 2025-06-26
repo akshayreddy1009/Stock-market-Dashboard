@@ -6,3 +6,5 @@ numpy
 plotly
 pyzmail36
 openpyxl
+gspread
+oauth2client

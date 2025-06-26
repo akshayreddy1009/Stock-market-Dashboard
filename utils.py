@@ -6,6 +6,8 @@ import pandas as pd
 import os
 from datetime import datetime, timedelta
 from openpyxl import load_workbook
+import gspread
+from oauth2client.service_account import ServiceAccountCredentials
 
 def gmail_extract():
     # === Email credentials ===
@@ -57,6 +59,14 @@ def gmail_extract():
     return 'Done'
 
 def excel_load():
+    # Setup Google Sheets connection
+    scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
+    creds = ServiceAccountCredentials.from_json_keyfile_dict(st.secrets["gcp_service_account"], scope)
+    client = gspread.authorize(creds)
+
+    # Open the master sheet (create this manually first)
+    sheet = client.open("Master_Portfolio_Tracker").worksheet("Sheet1")
+
     today_date = datetime.today().strftime('%d-%m-%Y')
     cob = datetime.today().strftime('%Y%m%d')
     #today_dt = datetime.today().strftime('%d-%m-%Y')
@@ -66,15 +76,20 @@ def excel_load():
     df["Date"]=today_date
     print(df)
 
-    file_path = 'excel_attachments/Master_Portfolio_Tracker.xlsx'
-    sheet_name = 'Sheet1'
+    # Append each row to the Google Sheet
+    values = df.values.tolist()
+    for row in values:
+        sheet.append_row(row)  # Append with Date column
 
-    existing_df = pd.read_excel(file_path, sheet_name=sheet_name)
-    startrow = len(existing_df) + 1
-    os.remove(f'excel_attachments/Portfolio_Holdings_UB5C0_{cob}.xlsx')
+    # file_path = 'excel_attachments/Master_Portfolio_Tracker.xlsx'
+    # sheet_name = 'Sheet1'
 
-    # Append without setting book/sheets manually
-    with pd.ExcelWriter(file_path, engine='openpyxl', mode='a', if_sheet_exists='overlay') as writer:
-        df.to_excel(writer, sheet_name=sheet_name, index=False, header=False, startrow=startrow)
+    # existing_df = pd.read_excel(file_path, sheet_name=sheet_name)
+    # startrow = len(existing_df) + 1
+    # os.remove(f'excel_attachments/Portfolio_Holdings_UB5C0_{cob}.xlsx')
+
+    # # Append without setting book/sheets manually
+    # with pd.ExcelWriter(file_path, engine='openpyxl', mode='a', if_sheet_exists='overlay') as writer:
+    #     df.to_excel(writer, sheet_name=sheet_name, index=False, header=False, startrow=startrow)
 
     return 'Done'

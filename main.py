@@ -3,6 +3,8 @@ import pandas as pd
 import yfinance as yf
 import plotly.express as px
 from utils import gmail_extract,excel_load
+import gspread
+from oauth2client.service_account import ServiceAccountCredentials
 
 st.set_page_config(layout="wide", page_title="Akshay's Stock Portfolio Dashboard")
 
@@ -23,8 +25,21 @@ if st.button('Refresh Gmail') and my_password == secret_pass:
 
 if st.button("Submit") and my_password == secret_pass:
 
-    df = pd.read_excel("excel_attachments/Master_Portfolio_Tracker.xlsx")
+    # Step 1: Authenticate
+    scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
+    creds = ServiceAccountCredentials.from_json_keyfile_dict(st.secrets["gcp_service_account"], scope)
+    client = gspread.authorize(creds)
+
+    # Step 2: Open the Google Sheet and read data
+    sheet = client.open("Master_Portfolio_Tracker").worksheet("Sheet1")
+    data = sheet.get_all_records()  # Gets all data as list of dicts
+
+    # Step 3: Load into DataFrame
+    df = pd.DataFrame(data)
     main_df = df
+    # df = pd.read_excel("excel_attachments/Master_Portfolio_Tracker.xlsx")
+    # main_df = df
+
     st.subheader("📊 Portfolio Summary")
     df['Date'] = pd.to_datetime(df['Date'])
     max_date = df['Date'].max()
