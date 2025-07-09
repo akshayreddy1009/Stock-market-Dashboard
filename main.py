@@ -42,6 +42,7 @@ if st.button("Submit") and my_password == secret_pass:
 
     st.subheader("📊 Portfolio Summary")
     df['Date'] = pd.to_datetime(df['Date'])
+    df['Total Gain']=df['Current Value']-df['Invested Value']
     max_date = df['Date'].max()
 
     final_df = df[df['Date']==max_date]   
@@ -59,6 +60,7 @@ if st.button("Submit") and my_password == secret_pass:
     col5.metric("Today's P&L", f"₹{todat_pl:,.2f}")
 
     portfolio_value = df.groupby('Date')['Current Value'].sum().reset_index()
+    profit_value = df.groupby('Date')['Total Gain'].sum().reset_index()
 
     # Charts
 
@@ -92,14 +94,21 @@ if st.button("Submit") and my_password == secret_pass:
     col1, col2 = st.columns(2)
 
     with col1:
-        st.subheader("Portfolio Allocation")
-        fig1 = px.pie(final_df, names='Script Name', values='Current Value', hole=0.4)
-        st.plotly_chart(fig1, use_container_width=True)
+            st.subheader("Total Profit Value Over Time")
+            fig5 = px.line(profit_value, x='Date', y='Total Gain')
+            st.plotly_chart(fig5, use_container_width=True)
+       
 
     with col2:
         st.subheader("Total Portfolio Value Over Time")
         fig2 = px.line(portfolio_value, x='Date', y='Current Value')
         st.plotly_chart(fig2, use_container_width=True)
+
+
+
+    st.subheader("Portfolio Allocation")
+    fig1 = px.pie(final_df, names='Script Name', values='Current Value', hole=0.4)
+    st.plotly_chart(fig1, use_container_width=True)
 
 
     tickers = main_df['ISIN'].unique().tolist()
