@@ -4,6 +4,7 @@ import yfinance as yf
 import plotly.express as px
 from utils import gmail_extract,excel_load
 import gspread
+import numpy as np
 from oauth2client.service_account import ServiceAccountCredentials
 
 st.set_page_config(layout="wide", page_title="Akshay's Stock Portfolio Dashboard")
