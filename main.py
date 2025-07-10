@@ -75,18 +75,25 @@ if st.button("Submit") and my_password == secret_pass:
     #                 color_continuous_scale=['red', 'green'], title="Gain/Loss by Stock")
     # st.plotly_chart(fig, use_container_width=True)
 
-    c1, c2 = st.columns(2)
+    # c1, c2 = st.columns(2)
     
-    with c1:
-        st.subheader("Performance by Stock")
-        fig3 = px.bar(final_df, x='Script Name', y='Unrealized P&L', color='Unrealized P&L',
-                    color_continuous_scale=['red', 'green'], title="Gain/Loss by Stock")
-        st.plotly_chart(fig3, use_container_width=True)
+    # with c1:
+    #     st.subheader("Performance by Stock")
+    #     fig3 = px.bar(final_df, x='Script Name', y='Unrealized P&L', color='Unrealized P&L',
+    #                 color_continuous_scale=['red', 'green'], title="Gain/Loss by Stock")
+    #     st.plotly_chart(fig3, use_container_width=True)
 
-    with c2:
-        st.subheader("Individual Stock Performance over time")
-        fig4 = px.line(df, x='Date', y='Current Value', color='Script Name')
-        st.plotly_chart(fig4, use_container_width=True)
+    # with c2:
+    #     st.subheader("Individual Stock Performance over time")
+    #     fig4 = px.line(df, x='Date', y='Current Value', color='Script Name')
+    #     st.plotly_chart(fig4, use_container_width=True)
+
+    fig3 = px.treemap(final_df, path=[px.Constant("Akshay's Portfolio"), 'Script Name'], values='Current Value',
+                  color='Current Value', hover_data=['Unrealized P&L'],
+                  color_continuous_scale='tealgrn',
+                  color_continuous_midpoint=np.average(df['Current Value'], weights=df['Current Value']),title = '''Portfolio Heatmap''')
+    fig3.update_layout(margin = dict(t=50, l=25, r=25, b=25))
+    st.plotly_chart(fig3, use_container_width=True)
 
     # pie = px.pie(final_df, names='Script Name', values='Current Value', title='Portfolio Allocation', hole=0.4)
     # st.plotly_chart(pie, use_container_width=True)
