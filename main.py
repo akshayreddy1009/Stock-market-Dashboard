@@ -45,6 +45,8 @@ if st.button("Submit") and my_password == secret_pass:
     df['Date'] = pd.to_datetime(df['Date'])
     df['Total Gain']=df['Current Value']-df['Invested Value']
     max_date = df['Date'].max()
+    df["Month"] = df["Date"].dt.to_period("M")
+    print(df)
 
     final_df = df[df['Date']==max_date]   
     total_invested = final_df['Invested Value'].sum()
@@ -62,6 +64,24 @@ if st.button("Submit") and my_password == secret_pass:
 
     portfolio_value = df.groupby('Date')['Current Value'].sum().reset_index()
     profit_value = df.groupby('Date')['Total Gain'].sum().reset_index()
+    month_value = df.groupby('Month')['''Today's P&L'''].sum().reset_index()
+    month_value["Month_Name"] = month_value["Month"].dt.strftime("%b")
+    month_value=month_value.sort_values(by='Month')
+    month_value = month_value[['Month_Name','''Today's P&L''']]
+    #print(month_value)
+
+    month_value["MoM_Change"] = month_value['''Today's P&L'''].diff()
+
+    # Optional: percentage change
+    month_value["MoM_%"] = month_value['''Today's P&L'''].pct_change() * 100
+
+
+    stock_value = final_df.groupby('Script Name')[['Invested Value','Unrealized P&L','Current Value']].sum().reset_index()
+    stock_value['Current Value']=stock_value['Current Value'].astype(float)
+    stock_value.sort_values(by='Current Value', ascending=False, inplace = True)
+    attrs = ['Invested Value','Unrealized P&L','Current Value']
+    for i in attrs:
+         stock_value[i]=stock_value[i].apply(lambda x: f"₹ {round(x):,}")
 
     # Charts
 
@@ -70,6 +90,8 @@ if st.button("Submit") and my_password == secret_pass:
 
     line_graph = px.line(grouped_df, x="Date", y='''Today's P&L''', title='Daily P&L Statement')
     st.plotly_chart(line_graph, use_container_width=True)
+    st.subheader('📈 Stock Details')
+    st.dataframe(stock_value, hide_index =1)
 
     # st.subheader("📈 Performance by Stock")
     # fig = px.bar(final_df, x='Script Name', y='Unrealized P&L', color='Unrealized P&L',
@@ -118,8 +140,18 @@ if st.button("Submit") and my_password == secret_pass:
     fig1 = px.pie(final_df, names='Script Name', values='Current Value', hole=0.4)
     st.plotly_chart(fig1, use_container_width=True)
 
+    c10, c11 = st.columns(2)
 
-    tickers = main_df['ISIN'].unique().tolist()
+    c10.subheader("📈 Monthly Profit Trend")
+    fig_bar = px.bar(month_value,x='Month_Name',y='''Today's P&L''')
+    c10.plotly_chart(fig_bar, use_container_width=True)
+
+    c11.subheader("📊 Month-over-Month Change")
+    fig_bar_2 = px.bar(month_value,x='Month_Name',y='''MoM_Change''')
+    c11.plotly_chart(fig_bar_2, use_container_width=True)
+
+
+    tickers = final_df['ISIN'].unique().tolist()
     cleaned_tickers = [item.strip() for item in tickers]
     stock_dict = {}
     new_tickers = []
