@@ -86,7 +86,8 @@ if st.button("Submit") and my_password == secret_pass:
     # Charts
 
     st.subheader('📈 Daily P&L trend')
-    grouped_df = df.groupby('Date').agg({'''Today's P&L''':'sum'}).reset_index()
+    last_90_days = df[df['Date'] >= pd.Timestamp.today() - pd.Timedelta(days=90)]
+    grouped_df = last_90_days.groupby('Date').agg({'''Today's P&L''':'sum'}).reset_index()
 
     line_graph = px.line(grouped_df, x="Date", y='''Today's P&L''', title='Daily P&L Statement')
     st.plotly_chart(line_graph, use_container_width=True)
